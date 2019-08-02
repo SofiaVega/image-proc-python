@@ -1,0 +1,132 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[20]:
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+
+
+# In[11]:
+
+
+wine_df=pd.read_csv("wine_data_clubes.csv")
+wine_df.head()
+wine_df.describe()
+
+
+# In[7]:
+
+
+sns.pairplot(wine_df,hue='class',vars=wine_df.columns[1:])
+
+
+# In[12]:
+
+
+sns.pairplot(wine_df,hue='class',vars=wine_df.columns[6:])
+
+
+# In[14]:
+
+
+sns.scatterplot(data=wine_df, x='od_ratio', y='alcohol', hue='class')
+plt.show()
+#elegimos este porque estan mas separados
+
+
+# In[ ]:
+
+
+
+
+
+# In[18]:
+
+
+cols=['class','od_ratio','alcohol']
+whole_dataset=wine_df[cols].copy()#agarramos un subset de wine df
+
+train_cols=['od_ratio','alcohol']
+target_col='class'
+
+knn=KNeighborsClassifier(n_neighbors=10) #este es un objeto
+knn.fit(whole_dataset[train_cols],whole_dataset[target_col])
+predictions=knn.predict(whole_dataset[train_cols])
+
+results=whole_dataset.copy()
+results['predicted_class']=predictions
+results
+
+
+# In[21]:
+
+
+m=100*metrics.accuracy_score(results['class'],results['predicted_class'])
+print(m)
+
+
+# In[25]:
+
+
+index=np.arange(0,178)
+mixed=np.random.shuffle(index)
+train_index=index[:160]
+test_index=index[160:]
+
+
+# In[27]:
+
+
+training_set=whole_dataset.iloc[train_index,:]
+testing_set=whole_dataset.iloc[test_index,:]
+training_set
+
+
+# In[30]:
+
+
+train_cols=['od_ratio','alcohol']
+target_col='class'
+
+knn=KNeighborsClassifier(n_neighbors=10) #este es un objeto
+knn.fit(training_set[train_cols],training_set[target_col])
+predictions=knn.predict(testing_set[train_cols])
+
+results=testing_set.copy()
+results['predicted_class']=predictions
+results
+
+mets=100*metrics.accuracy_score(results['class'],results['predicted_class'])
+print(mets)
+
+
+# In[55]:
+
+
+acList=[]
+for x in range(3,16):
+    knn=KNeighborsClassifier(n_neighbors=x) #este es un objeto
+    knn.fit(training_set[train_cols],training_set[target_col])
+    predictions=knn.predict(testing_set[train_cols])
+    results=testing_set.copy()
+    results['predicted_class']=predictions
+    results
+    a=100*metrics.accuracy_score(results['class'],results['predicted_class'])
+    acList.append(a)
+print(acList)
+plt.plot(acList)
+    
+
+
+# In[ ]:
+
+
+
+
