@@ -1,0 +1,110 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[3]:
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+
+
+# In[15]:
+
+
+bac1=plt.imread('smaller_project_datasets/PBoC_bacteria_lacI_titration/O1_R22_phase_pos_00.tif', format='tif')
+plt.imshow(bac1)
+
+
+# In[51]:
+
+
+bac1=plt.imread('smaller_project_datasets/PBoC_bacteria_lacI_titration/O2_R1740_yfp_pos_18.tif', format='tif')
+plt.imshow(bac1)
+
+
+# In[49]:
+
+
+bac1=plt.imread('smaller_project_datasets/PBoC_bacteria_lacI_titration/O2_R22_yfp_pos_10.tif', format='tif')
+plt.imshow(bac1)
+
+
+# In[52]:
+
+
+para=0.2
+nbac=bac1/np.max(bac1)
+filtered_img=nbac*(nbac>para)
+plt.imshow(filtered_img)
+print(filtered_img)
+print(np.sum(nbac>para))
+#nbac<0.4 muestra las puras bacterias para el auto
+
+
+# In[33]:
+
+
+bacAuto=plt.imread('smaller_project_datasets/PBoC_bacteria_lacI_titration/O2_auto_yfp_pos_00.tif', format='tif')
+plt.imshow(bacAuto)
+
+
+# In[43]:
+
+
+nbacA=bacAuto/np.max(bacAuto)
+filtered_auto=nbacA*(nbacA>0.3)
+plt.imshow(filtered_auto)
+print(filtered_auto)
+print(np.sum(nbacA>0.6))
+
+
+# In[16]:
+
+
+bac2=plt.imread('smaller_project_datasets/PBoC_bacteria_lacI_titration/O1_auto_yfp_pos_00.tif', format='tif')
+plt.imshow(bac2)
+
+
+# In[12]:
+
+
+bac3=plt.imread('smaller_project_datasets/PBoC_bacteria_lacI_titration/O1_delta_phase_pos_00.tif', format='tif')
+plt.imshow(bac3)
+
+
+# In[62]:
+
+
+bac4=plt.imread('smaller_project_datasets/PBoC_bacteria_lacI_titration/O1_delta_yfp_pos_00.tif', format='tif')
+plt.imshow(bac4)
+
+
+# In[67]:
+
+
+#bac4=(bac4-np.min(bac4))/np.max(bac4)
+filtered_img=bac4*(bac4>0.6)
+
+plt.imshow(filtered_img)
+print(filtered_img)
+
+
+# In[44]:
+
+
+print(bac4)
+plt.hist(bac4.flatten(),bins=100)
+plt.show()
+
+
+# In[20]:
+
+
+bac6=plt.imread('smaller_project_datasets/PBoC_bacteria_lacI_titration/O1_R1220_yfp_pos_00.tif', format='tif')
+plt.imshow(bac6)
+
