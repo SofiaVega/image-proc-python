@@ -1,0 +1,238 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[78]:
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+from skimage import segmentation
+from skimage.segmentation import random_walker
+from skimage import morphology
+from skimage.data import binary_blobs
+import skimage
+
+
+# In[71]:
+
+
+bac1=plt.imread('smaller_project_datasets/PBoC_bacteria_lacI_titration/O2_R22_yfp_pos_00.tif', format='tif')
+#plt.imshow(bac1)
+plt.imshow(bac1[300:,300:])
+
+
+# In[50]:
+
+
+para=0.2
+nbac=bac1/np.max(bac1)
+filtered_img=nbac*(nbac>para)
+plt.imshow(filtered_img)
+print(filtered_img)
+brillo=np.sum(nbac>para)
+total=np.sum(nbac>=0)
+print(np.sum(nbac>para))
+print(np.sum(nbac>=0))
+print(brillo/total)
+
+
+# In[113]:
+
+
+data=nbac
+markers = np.zeros(data.shape, dtype=np.uint)
+markers[data < 0.1] = 1
+markers[data > 0.2] = 2
+
+labels = random_walker(data, markers, beta=10, mode='bf')
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(8, 3.2),
+                                    sharex=True, sharey=True)
+ax1.imshow(data, cmap='gray', interpolation='nearest')
+ax1.axis('off')
+ax1.set_title('Noisy data')
+ax2.imshow(markers, cmap='magma', interpolation='nearest')
+ax2.axis('off')
+ax2.set_title('Markers')
+ax3.imshow(labels, cmap='gray', interpolation='nearest')
+ax3.axis('off')
+ax3.set_title('Segmentation')
+
+fig.tight_layout()
+plt.show()
+
+
+# In[124]:
+
+
+bac2=plt.imread('smaller_project_datasets/PBoC_bacteria_lacI_titration/O2_R1740_yfp_pos_18.tif', format='tif')
+data=bac2-np.min(bac2)
+data=data/np.max(data)
+#data*(data>0.3)
+markers = np.zeros(data.shape, dtype=np.uint)
+markers[data < 0.1] = 1
+markers[data > 0.4] = 2
+
+a = np.array(rando, bool)
+
+labels= random_walker(data, markers, beta=10, mode='bf')
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(8, 3.2),
+                                    sharex=True, sharey=True)
+print(labels)
+morphology.remove_small_objects(labels, 1, in_place=True)
+def removeSmallObject(filledImg, minSize = 20000):
+    biImgRsize = filledImg.shape[0] * 0.1
+    biImgCsize = filledImg.shape[1] * 0.1
+    biImg = filledImg[biImgRsize:-biImgRsize, biImgCsize:-biImgCsize]
+    cleanedImg = morphology.remove_small_objects(biImg, minSize)
+    return cleanedImg 
+#newlabels=removeSmallObject(bac2)
+
+ax1.imshow(data, cmap='gray', interpolation='nearest')
+ax1.axis('off')
+ax1.set_title('Noisy data')
+ax2.imshow(markers, cmap='magma', interpolation='nearest')
+ax2.axis('off')
+ax2.set_title('Markers')
+ax3.imshow(labels, cmap='gray', interpolation='nearest')
+ax3.axis('off')
+ax3.set_title('Segmentation')
+
+fig.tight_layout()
+plt.show()
+
+
+# In[100]:
+
+
+bac2=plt.imread('smaller_project_datasets/PBoC_bacteria_lacI_titration/O2_R1740_yfp_pos_18.tif', format='tif')
+data=bac2-np.min(bac2)
+data=data/np.max(data)
+filt=data*(data>0.3)
+plt.imshow(filt)
+
+
+#  
+
+# In[ ]:
+
+
+
+
+
+# In[19]:
+
+
+name=""
+lista=[]
+total=0
+promedio=0
+for x in range(21):
+    if(x<10):
+        name="smaller_project_datasets/PBoC_bacteria_lacI_titration/O2_R22_yfp_pos_0"+str(x)+".tif"
+    else:
+        name="smaller_project_datasets/PBoC_bacteria_lacI_titration/O2_R22_yfp_pos_"+str(x)+".tif"
+    photo=plt.imread(name, format='tif')
+    norm=photo/np.max(photo)
+    brillo=np.sum(norm>0.2)
+    total+=brillo
+    lista.append(brillo)
+promedio=total/20.0
+plt.plot(lista)
+print(promedio)
+
+
+# In[28]:
+
+
+name=""
+lista=[]
+total=0
+promedio=0
+for x in range(21):
+    if(x<10):
+        name="smaller_project_datasets/PBoC_bacteria_lacI_titration/O2_R1740_yfp_pos_0"+str(x)+".tif"
+    else:
+        name="smaller_project_datasets/PBoC_bacteria_lacI_titration/O2_R1740_yfp_pos_"+str(x)+".tif"
+    photo=plt.imread(name, format='tif')
+    norm=photo/np.max(photo)
+    brillo=np.sum(norm>0.2)
+    total+=brillo
+    lista.append(brillo)
+promedio=total/20.0
+plt.plot(lista)
+print(promedio)
+
+
+# In[129]:
+
+
+represor=["R1220", "R1740", "R22", "R60", "R124", "R260"]
+listaRep=[]
+for x in range(6):
+    total=0
+    promedio=0
+    for y in range(21):
+        if(y<10):
+            name="smaller_project_datasets/PBoC_bacteria_lacI_titration/O2_"+represor[x]+"_yfp_pos_0"+str(y)+".tif"
+        else:
+            name="smaller_project_datasets/PBoC_bacteria_lacI_titration/O2_"+represor[x]+"_yfp_pos_"+str(y)+".tif"
+        photo=plt.imread(name, format='tif')
+        norm=(photo-np.min(photo))/np.max(photo)
+        brillo=np.sum(norm>0.2)
+        total+=brillo
+    promedio=total/20.0
+    listaRep.append(promedio)
+plt.plot(listaRep)
+print(listaRep)
+
+
+# In[130]:
+
+
+represor=["R1220", "R1740", "R22", "R60", "R124", "R260"]
+listaRep=[]
+for x in range(6):
+    total=0
+    promedio=0
+    for y in range(21):
+        if(y<10):
+            name="smaller_project_datasets/PBoC_bacteria_lacI_titration/O1_"+represor[x]+"_yfp_pos_0"+str(y)+".tif"
+        else:
+            name="smaller_project_datasets/PBoC_bacteria_lacI_titration/O1_"+represor[x]+"_yfp_pos_"+str(y)+".tif"
+        photo=plt.imread(name, format='tif')
+        norm=(photo-np.min(photo))/np.max(photo)
+        brillo=np.sum(norm>0.2)
+        total+=brillo
+    promedio=total/20.0
+    listaRep.append(promedio)
+plt.plot(listaRep)
+print(listaRep)
+
+
+# In[131]:
+
+
+represor=["R1220", "R1740", "R22", "R60", "R124", "R260"]
+listaRep=[]
+for x in range(6):
+    total=0
+    promedio=0
+    for y in range(21):
+        if(y<10):
+            name="smaller_project_datasets/PBoC_bacteria_lacI_titration/O3_"+represor[x]+"_yfp_pos_0"+str(y)+".tif"
+        else:
+            name="smaller_project_datasets/PBoC_bacteria_lacI_titration/O3_"+represor[x]+"_yfp_pos_"+str(y)+".tif"
+        photo=plt.imread(name, format='tif')
+        norm=(photo-np.min(photo))/np.max(photo)
+        brillo=np.sum(norm>0.2)
+        total+=brillo
+    promedio=total/20.0
+    listaRep.append(promedio)
+plt.plot(listaRep)
+print(listaRep)
+
